@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from envs import WindyGridWorld
 from agents import Sarsa_Agent
 from time import sleep
+from tqdm import tqdm
+import numpy as np
 
 def train_windygridworld(env, agent, episodes=150):
     if env is None:
@@ -123,7 +125,42 @@ def taxi_print_frames(frames, wait_btw_frames, episode):
         print(f"Reward: {frame['reward']}")
         sleep(wait_btw_frames)
 
+def gym_render(img, status=False, rewards=[], reward_chart=True):
+    message = "Episode over" if status else ""
+    if reward_chart:
+        fig, (ax1, ax2) = plt.subplots(1, 2)
+    else:
+        fig, ax1 = plt.subplots(1, 1)
+    ax1.axis("off")
+    _ = ax1.imshow(img)
+    if reward_chart:
+        _ = ax2.plot(rewards)
+
+    plt.title(message)
+    plt.show()
+    clear_output(wait=True)
+
 def play_gym(env, agent, episodes=2):
+    all_rewards = []
+    for i in tqdm(range(episodes)):
+        state = env.reset()
+        agent.new_episode()
+        done = False
+
+        rewards = []
+        while not done:
+            # TODO: Agent has to choose an action here
+            action = agent.act(state)
+            state_, reward, done, _ = env.step(action)
+            rewards.append(reward)
+            # agent.learn(state, action,state_,reward,done)
+            gym_render(env.render(mode="rgb_array"), status=done, rewards=all_rewards, reward_chart=False)
+            state = state_
+            if done:
+                all_rewards.append(np.sum(rewards))
+    env.close()
+
+def play_gym2(env, agent, episodes=2):
     for episode in range(episodes):
         state = env.reset()
         done = False
@@ -135,5 +172,5 @@ def play_gym(env, agent, episodes=2):
                 fig, ax = plt.subplots(figsize=(12, 12))
                 ax.imshow(env.render(mode="rgb_array"))
                 plt.show()
-                sleep(0.01)
+                sleep(0.1)
                 clear_output(wait=True)

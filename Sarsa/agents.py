@@ -65,6 +65,6 @@ class Deep_Agent:
     def process_state(self, state):
         return tf.convert_to_tensor(state.reshape(1, self.state_size), dtype=tf.float32)
         
-    def load(self, src="actor_CartPole-v1.h5"):
+    def load(self, src="brain_CartPole-v1.h5"):
         #self.actor = tf.keras.models.load_model(src)
         self.actor.load_weights(src)

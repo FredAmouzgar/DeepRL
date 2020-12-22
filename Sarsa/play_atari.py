@@ -4,9 +4,11 @@ import sys, gym, time
 #
 # Test yourself as a learning agent! Pass environment name as a command-line argument, for example:
 #
-# python keyboard_agent.py SpaceInvadersNoFrameskip-v4
+# $ python keyboard_agent.py SpaceInvadersNoFrameskip-v4
+# OR
+# $ python play_atari.py "Pong-v4" 0.1 --> To set the waiting time
 #
-
+WAIT = 0.1 if len(sys.argv)<3 else float(sys.argv[2])
 env = gym.make('LunarLander-v2' if len(sys.argv)<2 else sys.argv[1])
 
 if not hasattr(env.action_space, 'n'):
@@ -64,8 +66,8 @@ def rollout(env):
         if human_wants_restart: break
         while human_sets_pause:
             env.render()
-            time.sleep(0.1)
-        time.sleep(0.1)
+            time.sleep(WAIT)
+        time.sleep(WAIT)
     print("timesteps %i reward %0.2f" % (total_timesteps, total_reward))
 
 print("ACTIONS={}".format(ACTIONS))
